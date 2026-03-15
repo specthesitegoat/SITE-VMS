@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VMS Scripts — Roblox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red: #ff2244;
+      --red-dim: #cc1133;
+      --red-glow: rgba(255,34,68,0.35);
+      --bg: #050508;
+      --bg2: #0a0a10;
+      --bg3: #10101a;
+      --card: #0d0d16;
+      --border: rgba(255,34,68,0.18);
+      --text: #e8e8f0;
+      --muted: #6666888;
+      --white: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID BG ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,34,68,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,34,68,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(5,5,8,0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: var(--white);
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--red); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #aaa;
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--red); }
+
+    .nav-btn {
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 8px 22px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: background .2s, box-shadow .2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--red-dim);
+      box-shadow: 0 0 20px var(--red-glow);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 60px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,34,68,0.1);
+      border: 1px solid rgba(255,34,68,0.3);
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+      margin-bottom: 28px;
+      animation: fadeDown .6s ease both;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.4; transform:scale(1.5); }
+    }
+
+    .hero h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.8rem, 7vw, 6rem);
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: -1px;
+      animation: fadeUp .7s .1s ease both;
+    }
+
+    .hero h1 span {
+      color: var(--red);
+      text-shadow: 0 0 40px var(--red-glow);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: #8888aa;
+      font-weight: 400;
+      margin-top: 20px;
+      max-width: 520px;
+      line-height: 1.6;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .7s .3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 14px 36px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      transition: all .2s;
+      text-transform: uppercase;
+    }
+
+    .btn-primary:hover {
+      background: var(--red-dim);
+      box-shadow: 0 0 30px var(--red-glow);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 14px 36px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      transition: all .2s;
+      text-transform: uppercase;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,34,68,0.1);
+      box-shadow: 0 0 20px var(--red-glow);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      margin-top: 64px;
+      animation: fadeUp .7s .4s ease both;
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--red);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: #666688;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .section-tag {
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      color: var(--red);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 900;
+      color: var(--white);
+    }
+
+    .section-title span { color: var(--red); }
+
+    /* ── SCRIPTS GRID ── */
+    .scripts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .script-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s, box-shadow .3s;
+      cursor: default;
+    }
+
+    .script-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .script-card:hover {
+      border-color: rgba(255,34,68,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 40px rgba(255,34,68,0.12);
+    }
+
+    .script-card:hover::before { opacity: 1; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      background: rgba(255,34,68,0.1);
+      border: 1px solid rgba(255,34,68,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .card-badge {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+      padding: 4px 10px;
+      text-transform: uppercase;
+    }
+
+    .badge-free { background: rgba(34,255,136,0.1); color: #22ff88; border: 1px solid rgba(34,255,136,0.2); }
+    .badge-hot { background: rgba(255,120,34,0.1); color: #ff7822; border: 1px solid rgba(255,120,34,0.2); }
+    .badge-new { background: rgba(34,136,255,0.1); color: #2288ff; border: 1px solid rgba(34,136,255,0.2); }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: #7777aa;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    .card-stars { color: #ffcc00; font-size: 0.85rem; }
+
+    .card-copy-btn {
+      background: rgba(255,34,68,0.1);
+      border: 1px solid rgba(255,34,68,0.25);
+      color: var(--red);
+      padding: 6px 16px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all .2s;
+    }
+
+    .card-copy-btn:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: #070710;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      color: #aaffcc;
+      margin-top: 12px;
+      overflow-x: auto;
+      position: relative;
+      line-height: 1.7;
+    }
+
+    .copy-pill {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(255,34,68,0.15);
+      border: 1px solid rgba(255,34,68,0.3);
+      color: var(--red);
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      transition: all .2s;
+    }
+
+    .copy-pill:hover { background: var(--red); color: white; }
+
+    /* ── REVIEW SECTION ── */
+    .review-section {
+      background: linear-gradient(135deg, rgba(255,34,68,0.04), transparent);
+      border: 1px solid var(--border);
+      padding: 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-section::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 20%; right: 20%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+
+    .review-big-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(135deg, var(--red), #ff6644);
+      color: white;
+      border: none;
+      padding: 20px 52px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      cursor: pointer;
+      clip-path: polygon(16px 0%, 100% 0%, calc(100% - 16px) 100%, 0% 100%);
+      transition: all .3s;
+      text-transform: uppercase;
+      margin-top: 28px;
+      animation: glow-pulse 2s infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%,100% { box-shadow: 0 0 20px var(--red-glow); }
+      50% { box-shadow: 0 0 50px rgba(255,34,68,0.6), 0 0 80px rgba(255,34,68,0.2); }
+    }
+
+    .review-big-btn:hover {
+      transform: scale(1.05) translateY(-3px);
+      box-shadow: 0 10px 60px rgba(255,34,68,0.5) !important;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid rgba(255,34,68,0.3);
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+      transform: translateY(30px) scale(0.97);
+      transition: transform .35s cubic-bezier(.16,1,.3,1);
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), #ff6644, var(--red));
+    }
+
+    .modal-header {
+      padding: 28px 32px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: 1px;
+    }
+
+    .modal-close {
+      background: rgba(255,34,68,0.1);
+      border: 1px solid rgba(255,34,68,0.2);
+      color: var(--red);
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: all .2s;
+    }
+
+    .modal-close:hover { background: var(--red); color: white; }
+
+    .modal-body { padding: 28px 32px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: #7777aa;
+      text-transform: uppercase;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,34,68,0.15);
+      color: var(--white);
+      padding: 12px 16px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: rgba(255,34,68,0.5);
+      box-shadow: 0 0 0 3px rgba(255,34,68,0.08);
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder {
+      color: #44445a;
+    }
+
+    .form-select option { background: #0d0d16; }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.5;
+    }
+
+    /* Star rating */
+    .star-rating {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #333355;
+      transition: color .15s, transform .15s;
+      line-height: 1;
+    }
+
+    .star-btn:hover, .star-btn.active {
+      color: #ffcc00;
+      transform: scale(1.2);
+    }
+
+    .modal-footer {
+      padding: 0 32px 28px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .submit-btn {
+      flex: 1;
+      background: var(--red);
+      color: white;
+      border: none;
+      padding: 14px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all .2s;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    }
+
+    .submit-btn:hover {
+      background: var(--red-dim);
+      box-shadow: 0 4px 24px var(--red-glow);
+    }
+
+    .submit-btn:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .cancel-btn {
+      background: transparent;
+      color: #7777aa;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 24px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: all .2s;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    }
+
+    .cancel-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--red);
+      padding: 16px 24px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+      z-index: 9999;
+      transform: translateX(120%);
+      transition: transform .35s cubic-bezier(.16,1,.3,1);
+      max-width: 320px;
+    }
+
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-left-color: #22ff88; }
+    .toast.error { border-left-color: var(--red); }
+
+    /* Footer */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px;
+      border-top: 1px solid var(--border);
+      color: #44445a;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+
+    footer span { color: var(--red); }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,34,68,0.3); border-radius: 3px; }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 60px 20px; }
+      .hero-stats { gap: 28px; }
+      .form-row { grid-template-columns: 1fr; }
+      .review-section { padding: 40px 24px; }
+      .modal-body { padding: 20px; }
+      .modal-header { padding: 20px; }
+      .modal-footer { padding: 0 20px 20px; }
+    }
+
+    /* Divider */
+    .divider {
+      position: relative;
+      z-index: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">VMS<span>.</span>SCRIPTS</a>
+  <ul class="nav-links">
+    <li><a href="#scripts">Scripts</a></li>
+    <li><a href="#avaliacoes">Avaliações</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <button class="nav-btn" onclick="openModal()">⭐ AVALIAR</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Scripts Premium para Roblox</div>
+  <h1>VMS <span>SCRIPTS</span></h1>
+  <p class="hero-sub">Os melhores scripts do Roblox — gratuitos, seguros e atualizados. Execute com qualquer executor.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="openModal()">⭐ DEIXAR AVALIAÇÃO</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Scripts</div></div>
+    <div class="stat"><div class="stat-num">+100</div><div class="stat-label">Membros</div></div>
+    <div class="stat"><div class="stat-num">6★</div><div class="stat-label">Nota Média</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SCRIPTS -->
+<section id="scripts">
+  <div class="section-header">
+    <div class="section-tag">// LIBRARY</div>
+    <div class="section-title">SCRIPTS <span>DISPONÍVEIS</span></div>
+  </div>
+  <div class="scripts-grid">
+
+    <!-- Card 1 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">🎮</div>
+        <span class="card-badge badge-hot">HOT</span>
+      </div>
+      <div class="card-title">UNIVERSAL ESP</div>
+      <div class="card-desc">Veja todos os players através das paredes. Suporta a maioria dos jogos do Roblox.</div>
+      <div class="code-block" id="code1">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/esp/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code1', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★★ <span style="color:#7777aa;font-size:.8rem">(482)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">⚡</div>
+        <span class="card-badge badge-free">FREE</span>
+      </div>
+      <div class="card-title">AIMBOT SUAVE</div>
+      <div class="card-desc">Aimbot silencioso com FOV configurável. Funciona em jogos de tiro.</div>
+      <div class="code-block" id="code2">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/aim/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code2', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★☆ <span style="color:#7777aa;font-size:.8rem">(317)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">🚀</div>
+        <span class="card-badge badge-new">NEW</span>
+      </div>
+      <div class="card-title">SPEED HACK</div>
+      <div class="card-desc">Aumente sua velocidade de movimento. Anti-kick integrado.</div>
+      <div class="code-block" id="code3">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/speed/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code3', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★★ <span style="color:#7777aa;font-size:.8rem">(201)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">💎</div>
+        <span class="card-badge badge-free">FREE</span>
+      </div>
+      <div class="card-title">AUTO FARM</div>
+      <div class="card-desc">Farm automático para os jogos mais populares. AFK friendly.</div>
+      <div class="code-block" id="code4">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/farm/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code4', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★☆ <span style="color:#7777aa;font-size:.8rem">(158)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">🛡️</div>
+        <span class="card-badge badge-hot">HOT</span>
+      </div>
+      <div class="card-title">INFINITE JUMP</div>
+      <div class="card-desc">Pule infinitamente sem limitações. Compatível com todos os jogos.</div>
+      <div class="code-block" id="code5">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/jump/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code5', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★★ <span style="color:#7777aa;font-size:.8rem">(394)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">🌐</div>
+        <span class="card-badge badge-new">NEW</span>
+      </div>
+      <div class="card-title">TELEPORT GUI</div>
+      <div class="card-desc">Interface para teletransporte. Salve locais favoritos.</div>
+      <div class="code-block" id="code6">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/tp/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code6', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★☆ <span style="color:#7777aa;font-size:.8rem">(127)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">🔫</div>
+        <span class="card-badge badge-hot">HOT</span>
+      </div>
+      <div class="card-title">NO RECOIL</div>
+      <div class="card-desc">Elimine o recuo de qualquer arma. Compatível com jogos FPS do Roblox.</div>
+      <div class="code-block" id="code7">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/norecoil/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code7', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★★ <span style="color:#7777aa;font-size:.8rem">(263)</span></span>
+      </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="script-card">
+      <div class="card-top">
+        <div class="card-icon">👁️</div>
+        <span class="card-badge badge-new">NEW</span>
+      </div>
+      <div class="card-title">WALLHACK LITE</div>
+      <div class="card-desc">Veja inimigos e itens através de paredes. Versão leve e otimizada.</div>
+      <div class="code-block" id="code8">
+        <span style="color:#ff6688">loadstring</span><span style="color:#eee">(game:HttpGet(</span><span style="color:#ffcc44">"https://raw.githubusercontent.com/vms/wallhack/main/loader.lua"</span><span style="color:#eee">))()</span>
+        <button class="copy-pill" onclick="copyCode('code8', this)">COPIAR</button>
+      </div>
+      <div class="card-footer">
+        <span class="card-stars">★★★★☆ <span style="color:#7777aa;font-size:.8rem">(189)</span></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REVIEW CTA -->
+<section id="avaliacoes">
+  <div class="review-section">
+    <div class="section-tag">// COMUNIDADE</div>
+    <div class="section-title" style="margin-top:8px">DEIXE SUA <span>AVALIAÇÃO</span></div>
+    <p style="color:#7777aa;margin-top:16px;font-size:1.05rem;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6">
+      Curtiu os scripts? Avalie e ajude a comunidade! Sua mensagem aparece direto no nosso Discord.
+    </p>
+    <button class="review-big-btn" onclick="openModal()">
+      ⭐ AVALIAR ⭐
+    </button>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FOOTER -->
+<footer id="contato">
+  <p>© 2025 <span>VMS Scripts</span> — Todos os direitos reservados.</p>
+  <p style="margin-top:8px;font-size:.78rem">Feito para a comunidade Roblox 🎮</p>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title">⭐ DEIXAR AVALIAÇÃO</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nick do Roblox</label>
+          <input class="form-input" id="robloxNick" type="text" placeholder="SeuNick123"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Discord</label>
+          <input class="form-input" id="discordNick" type="text" placeholder="usuario#0000"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label class="form-label">Nota</label>
+          <div class="star-rating" id="starRating">
+            <button class="star-btn" data-val="1" onclick="setRating(1)">★</button>
+            <button class="star-btn" data-val="2" onclick="setRating(2)">★</button>
+            <button class="star-btn" data-val="3" onclick="setRating(3)">★</button>
+            <button class="star-btn" data-val="4" onclick="setRating(4)">★</button>
+            <button class="star-btn" data-val="5" onclick="setRating(5)">★</button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">Avaliação</label>
+        <textarea class="form-textarea" id="reviewText" placeholder="Escreva o que achou dos scripts, o que melhorou, o que gostou..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" onclick="closeModal()">CANCELAR</button>
+      <button class="submit-btn" id="submitBtn" onclick="submitReview()">ENVIAR AVALIAÇÃO</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Estado ──
+  let selectedRating = 0;
+
+  // ── Modal ──
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  // ── Stars ──
+  function setRating(val) {
+    selectedRating = val;
+    const stars = document.querySelectorAll('.star-btn');
+    stars.forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+    });
+  }
+
+  // ── Toast ──
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  // ── Copy Code ──
+  function copyCode(id, btn) {
+    const block = document.getElementById(id);
+    const text = block.innerText.replace('COPIAR', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ COPIADO';
+      setTimeout(() => btn.textContent = 'COPIAR', 2000);
+    });
+  }
+
+  // ── Submit Review via Discord Webhook ──
+  async function submitReview() {
+    const roblox = document.getElementById('robloxNick').value.trim();
+    const discord = document.getElementById('discordNick').value.trim();
+    const review = document.getElementById('reviewText').value.trim();
+
+    if (!roblox) { showToast('⚠️ Digite seu nick do Roblox!', 'error'); return; }
+    if (!discord) { showToast('⚠️ Digite seu nick do Discord!', 'error'); return; }
+    if (!selectedRating) { showToast('⚠️ Selecione uma nota!', 'error'); return; }
+    if (!review) { showToast('⚠️ Escreva sua avaliação!', 'error'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'ENVIANDO...';
+
+    const stars = '⭐'.repeat(selectedRating) + '☆'.repeat(5 - selectedRating);
+    const color = selectedRating >= 4 ? 0x22ff88 : selectedRating >= 3 ? 0xffcc00 : 0xff2244;
+
+    const payload = {
+      username: "VMS Scripts — Avaliações",
+      avatar_url: "https://i.imgur.com/1G99Nx1.png",
+      embeds: [{
+        title: `${stars} Nova Avaliação — ${selectedRating}/5`,
+        color: color,
+        fields: [
+          { name: "🎮 Nick Roblox", value: roblox, inline: true },
+          { name: "💬 Discord", value: discord, inline: true },
+          { name: "📝 Avaliação", value: review, inline: false }
+        ],
+        footer: {
+          text: "VMS Scripts • " + new Date().toLocaleString('pt-BR')
+        },
+        thumbnail: {
+          url: "https://i.imgur.com/1G99Nx1.png"
+        }
+      }]
+    };
+
+    const WEBHOOK = "https://discord.com/api/webhooks/1482867664698474699/CP7AqC84im6RUaD_c8DTWHgTAvvaECveP_fm5dt1Rl6GbqTVedSiSERdLk5VOkcFAnxc";
+
+    try {
+      const res = await fetch(WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok || res.status === 204) {
+        showToast('✅ Avaliação enviada! Obrigado!', 'success');
+        closeModal();
+        // Reset
+        document.getElementById('robloxNick').value = '';
+        document.getElementById('discordNick').value = '';
+        document.getElementById('reviewText').value = '';
+        selectedRating = 0;
+        document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('active'));
+      } else {
+        showToast('❌ Erro ao enviar. Tente novamente.', 'error');
+      }
+    } catch(e) {
+      showToast('❌ Erro de conexão. Verifique sua internet.', 'error');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'ENVIAR AVALIAÇÃO';
+  }
+
+  // Fechar com ESC
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>
